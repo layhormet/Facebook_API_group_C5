@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\AuthController as ApiAuthController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,5 +15,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
+Route::post('/register',[ApiAuthController::class, 'register'])->name('register');
