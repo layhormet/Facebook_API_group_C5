@@ -4,9 +4,14 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use GuzzleHttp\Psr7\Request as Psr7Request;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -119,4 +124,88 @@ class AuthController extends Controller
             'access_token' => $accessToken,
         ]);
     }
+
+    public function forgot_password(Request $request)
+    {
+        try {
+            // Validate the email field
+            $request->validate([
+                'email' => 'required|string|email',
+            ]);
+
+            // Find the user by email
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found',
+                    'success' => false,
+                ], 404);
+            }
+
+            // Generate a random token
+            $token = Str::random(40);
+
+            // Store the token in the user's record
+            $user->reset_password_token = $token;
+            $user->save();
+
+            // Generate the password reset URL
+            $resetUrl = URL::to('/') . '/reset-password?token=' . $token;
+
+            // Send email to the user with the token
+            Mail::send('emails.password_reset', ['url' => $resetUrl], function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('Password Reset Request');
+            });
+
+            return response()->json([
+                'message' => 'Password reset token generated and email sent',
+                'success' => true,
+            ], 200);
+        } catch (\Exception $e) {
+            // Log the exception for debugging purposes
+            \Log::error('Error in forgot_password: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Something went wrong',
+                'success' => false,
+            ], 500);
+        }
+    }
+
+    public function reset_password(Request $request)
+    {
+        try {
+            $request->validate([
+                'token' => 'required|string',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            $user = User::where('reset_password_token', $request->token)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Invalid token',
+                    'success' => false,
+                ], 400);
+            }
+
+            // Update the user's password
+            $user->password = Hash::make($request->password);
+            $user->reset_password_token = null; // Clear the reset token
+            $user->save();
+
+            return response()->json([
+                'message' => 'Password reset successfully',
+                'success' => true,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'success' => false,
+            ], 500);
+        }
+    }
+
 }
