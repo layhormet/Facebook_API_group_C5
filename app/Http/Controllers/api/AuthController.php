@@ -15,7 +15,8 @@ class AuthController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::all();
+        return response()->json($users);
     }
 
     /**
@@ -23,7 +24,7 @@ class AuthController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Implementation for storing a new resource
     }
 
     /**
@@ -31,7 +32,16 @@ class AuthController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+                'success' => false
+            ], 404);
+        }
+
+        return response()->json($user);
     }
 
     /**
@@ -39,7 +49,7 @@ class AuthController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Implementation for updating the specified resource
     }
 
     /**
@@ -47,8 +57,15 @@ class AuthController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // Implementation for removing the specified resource
     }
+
+    /**
+     * Register a new user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(Request $request)
     {
         $request->validate([
@@ -68,5 +85,38 @@ class AuthController extends Controller
             'success' => true,
             'user' => $user,
         ], 201);
+    }
+
+    /**
+     * Login an existing user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Invalid email or password',
+                'success' => false,
+            ], 401);
+        }
+
+        $tokenResult = $user->createToken('authToken');
+        $accessToken = $tokenResult->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful',
+            'success' => true,
+            'user' => $user,
+            'access_token' => $accessToken,
+        ]);
     }
 }
