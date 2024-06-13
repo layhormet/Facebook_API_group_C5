@@ -4,14 +4,17 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use GuzzleHttp\Psr7\Request as Psr7Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+
+
 
 class AuthController extends Controller
 {
@@ -207,5 +210,12 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function logout(Request $request):JsonResponse
 
+    {
+      $user = Auth::user();
+      $user->tokens()->delete();
+      auth()->guard('web')->logout();
+      return response()->json(['success' => true,'message' => 'you have been logged out'], 200);
+    }
 }
