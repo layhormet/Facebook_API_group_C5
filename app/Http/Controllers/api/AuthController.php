@@ -1,31 +1,22 @@
 <?php
 
-// namespace App\Http\Controllers\api;
 
-// use App\Http\Controllers\Controller;
-// use App\Models\User;
-// use GuzzleHttp\Psr7\Request as Psr7Request;
-// use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Hash;
-// use Illuminate\Support\Facades\Auth;
-// use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
-// use Illuminate\Support\Facades\Mail;
-// use Illuminate\Support\Facades\URL;
-// use Illuminate\Support\Str;
 
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
+
+
 
 class AuthController extends Controller
 {
@@ -193,89 +184,40 @@ class AuthController extends Controller
         }
     }
 
+
+
     public function reset_password(Request $request)
     {
-        try {
-            $request->validate([
-                'token' => 'required|string',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
+        Log::info('Reset password request received', $request->all());
 
-            $user = User::where('reset_password_token', $request->token)->first();
-
-            if (!$user) {
-                return response()->json([
-                    'message' => 'Invalid token',
-                    'success' => false,
-                ], 400);
-            }
-
-            // Update the user's password
-            $user->password = Hash::make($request->password);
-            $user->reset_password_token = null; // Clear the reset token
-            $user->save();
-
-            return response()->json([
-                'message' => 'Password reset successfully',
-                'success' => true,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong',
-                'success' => false,
-            ], 500);
-        }
-    }
-    // public function logout(Request $request)
-    // {
-    //     try {
-    //         $user = $request->user(); // Retrieve the authenticated user
-
-    //         if ($user && $request->user()->currentAccessToken()->token === $request->bearerToken()) {
-    //             // Compare the token from the request with the current access token
-    //             $request->user()->tokens()->delete(); // Revoke all tokens for the user
-
-    //             return response()->json([
-    //                 'message' => 'User successfully logged out',
-    //                 'success' => true,
-    //             ]);
-    //         }
-
-    //         return response()->json([
-    //             'message' => 'Unauthorized',
-    //             'success' => false,
-    //         ], 401);
-    //     } catch (\Exception $e) {
-    //         // Log any errors that occur during logout
-    //         Log::error('Error in logout: ' . $e->getMessage());
-
-    //         return response()->json([
-    //             'message' => 'Something went wrong',
-    //             'success' => false,
-    //         ], 500);
-    //     }
-    // }
-    public function logout(Request $request)
-{
-    try {
-        if (!$request->user()) {
-            return Response::json([
-                'message' => 'User not authenticated',
-            ], 401); // Unauthorized
-        }
-
-        $request->user()->currentAccessToken()->delete();
-
-        return Response::json([
-            'message' => 'Successfully logged out',
+        $request->validate([
+            'token' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
         ]);
-    } catch (\Throwable $e) {
-        Log::error('Error in logout: ' . $e->getMessage());
 
-        return Response::json([
-            'message' => 'Failed to logout',
-        ], 500);
+        $user = User::where('reset_password_token', $request->token)->first();
+
+        if (!$user) {
+            Log::warning('Invalid token', ['token' => $request->token]);
+            return response()->json(['message' => 'Invalid token', 'success' => false], 400);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+            'reset_password_token' => null,
+        ]);
+
+        Log::info('Password reset successfully', ['user_id' => $user->id]);
+
+        return response()->json(['message' => 'Password reset successfully', 'success' => true], 200);
     }
-}
-    
+
+    public function logout(Request $request): JsonResponse
+
+    {
+        $user = Auth::user();
+        $user->tokens()->delete();
+        auth()->guard('web')->logout();
+        return response()->json(['success' => true, 'message' => 'you have been logged out'], 200);
+    }
 }
