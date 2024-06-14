@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->integer('user_id');
-            $table->string('content');
-            $table->string('image');
-            $table->string('video');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('reset_password_token')->nullable()->after('remember_token');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -10,9 +10,15 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
+        'user_id',
         'content',
-        'auth_id',
-        'tags',
+        'image',
+        'video'
     ];
+
+    protected $casts = [
+        'image' => 'array',
+        'video' => 'array'
+    ];
+   
 }
