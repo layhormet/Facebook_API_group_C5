@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
@@ -15,7 +13,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 
 
 
@@ -35,25 +32,12 @@ class AuthController extends Controller
      */
     public function store(Request $request)
     {
-        // Implementation for storing a new resource
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        $user = User::find($id);
 
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found',
-                'success' => false
-            ], 404);
-        }
-
-        return response()->json($user);
-    }
 
     /**
      * Update the specified resource in storage.
@@ -68,7 +52,6 @@ class AuthController extends Controller
      */
     public function destroy(string $id)
     {
-        // Implementation for removing the specified resource
     }
 
     /**
@@ -123,8 +106,7 @@ class AuthController extends Controller
         $tokenResult = $user->createToken('authToken');
         $accessToken = $tokenResult->plainTextToken;
 
-        // Save the access token in the user's api_token column
-        $user->api_token = $accessToken;
+
         $user->save();
 
         return response()->json([
@@ -139,12 +121,12 @@ class AuthController extends Controller
     public function forgot_password(Request $request)
     {
         try {
-            // Validate the email field
+
             $request->validate([
                 'email' => 'required|string|email',
             ]);
 
-            // Find the user by email
+
             $user = User::where('email', $request->email)->first();
 
             if (!$user) {
@@ -154,17 +136,14 @@ class AuthController extends Controller
                 ], 404);
             }
 
-            // Generate a random token
+
             $token = Str::random(40);
 
-            // Store the token in the user's record
+
             $user->reset_password_token = $token;
             $user->save();
-
-            // Generate the password reset URL
             $resetUrl = URL::to('/') . '/reset-password?token=' . $token;
 
-            // Send email to the user with the token
             Mail::send('emails.password_reset', ['url' => $resetUrl], function ($message) use ($user) {
                 $message->to($user->email);
                 $message->subject('Password Reset Request');

@@ -21,4 +21,8 @@ class Post extends Model
         'video' => 'array'
     ];
    
+
+    public function comments(){
+        return $this->hasMany(Comments::class);
+    }
 }
