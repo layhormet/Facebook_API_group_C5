@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comments;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -12,7 +14,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -45,5 +47,24 @@ class CommentController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    public function commentPost(Request $request)
+    {
+        $request->validate([
+            'post_id' => 'required',
+            'body' => 'required',
+            'description' => 'required',
+        ]);
+
+        $comment = Comments::create([
+            'post_id' => $request->post_id,
+            'body' => $request->body,
+            'description' => $request->description,
+            'user_id' => Auth::id()
+        ]);
+
+        $comment->load('user', 'post');
+
+        return response()->json($comment, 201);
     }
 }

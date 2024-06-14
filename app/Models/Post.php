@@ -15,4 +15,7 @@ class Post extends Model
         'auth_id',
         'tags',
     ];
+    public function comments(){
+        return $this->hasMany(Comments::class);
+    }
 }

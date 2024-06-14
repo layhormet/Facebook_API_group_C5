@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\CommentController;
 use App\Http\Controllers\PostController;
 
 /*
@@ -32,6 +33,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/forgot_password',[AuthController::class,'forgot_password'])->name('forgot_password');
 Route::post('/reset_password',[AuthController::class, 'reset_password'])->name('reset_password');
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware('auth:sanctum')->post('/commentPost', [CommentController::class, 'commentPost'])->name('commentPost');
+
 
 
 
