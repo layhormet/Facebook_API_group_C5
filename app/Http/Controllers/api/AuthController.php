@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -165,7 +166,7 @@ class AuthController extends Controller
             ], 200);
         } catch (\Exception $e) {
             // Log the exception for debugging purposes
-            \Log::error('Error in forgot_password: ' . $e->getMessage());
+            Log::error('Error in forgot_password: ' . $e->getMessage());
 
             return response()->json([
                 'message' => 'Something went wrong',

@@ -34,3 +34,11 @@ Route::post('reset_password',[AuthController::class, 'reset_password'])->name('r
 
 
 
+Route::post('/create-post', [PostController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/list', [PostController::class, 'index']);
+Route::get('/show/{id}', [PostController::class, 'show']);
+Route::put('/update/{id}', [PostController::class, 'update']);
+Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+   
+
+
