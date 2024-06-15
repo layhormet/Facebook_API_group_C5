@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\api\AuthController as ApiAuthController;
+use App\Http\Controllers\API\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -53,3 +54,5 @@ Route::get('/posts/{id}', [PostController::class, 'show'])->name('showPost');
 Route::get('/posts/{postId}/comments', [PostController::class, 'showComment'])->name('showComment');
 Route::put('/posts/{id}', [PostController::class, 'update'])->name('updatePost');
 Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('deletePost');
+
+Route::get('/home',[HomeController::class,'index']);
