@@ -80,7 +80,7 @@ class CommentController extends Controller
             'description' => 'required|string|max:255',
         ]);
 
-        $comment = Comment::create([
+        $comment = Comments::create([
             'post_id' => $request->post_id,
             'description' => $request->description,
             'user_id' => Auth::id(),

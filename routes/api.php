@@ -49,3 +49,5 @@ Route::middleware('auth:sanctum')->group(function () {
 // Public routes for posts
 Route::get('/posts', [PostController::class, 'index'])->name('listPosts');
 Route::get('/posts/{id}', [PostController::class, 'show'])->name('showPost');
+Route::get('/posts/{postId}/comments', [PostController::class,'showComment'])->name('showComment');
+

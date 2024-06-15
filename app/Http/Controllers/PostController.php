@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comments;
 use App\Models\Post;
+use App\Http\Resources\UserCommentResource; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+;
 
 class PostController extends Controller
 {
@@ -118,4 +121,20 @@ class PostController extends Controller
             'success' => true
         ]);
     }
+    public function showComment($post_id)
+    {
+        // Find the post
+        $post = Post::find($post_id);
+
+        if (!$post) {
+            return response()->json(['success' => false, 'message' => 'Post not found'], 404);
+        }
+
+        // Retrieve comments for the post with user information
+        $comments = Comments::where('post_id', $post_id)->with('user')->get();
+        $comments = UserCommentResource::collection($comments);
+
+        return response()->json(['post' => $post, 'comments' => $comments], 200);
+    }
+    
 }
