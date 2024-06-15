@@ -41,4 +41,7 @@ Route::put('/update/{id}', [PostController::class, 'update']);
 Route::delete('/delete/{id}', [PostController::class, 'destroy']);
    
 
+Route::post('/add-like', [PostController::class, 'addLike'])->middleware('auth:sanctum');
+
+
 

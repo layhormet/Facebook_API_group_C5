@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostLiatResourse;
+use App\Http\Resources\PostResourse;
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +18,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
+        $posts = PostLiatResourse::collection($posts);
         return response()->json([
             'message' => "The list all posts",
             'success' => true,
@@ -59,6 +63,7 @@ class PostController extends Controller
     public function show(string $id)
     {
         $posts = Post::find($id);
+        $posts= new PostResourse($posts);
         return response()->json(['success' => true, 'data' => $posts], 200);
     }
 
@@ -118,4 +123,48 @@ class PostController extends Controller
             'success' => true
         ]);
     }
+
+    // add like action to post
+
+    public function addLike(Request $request)
+    {
+        
+        $user = $request->user();
+        try {
+            $like = Like::where('user_id', $user->id)
+                ->where('post_id', $request->post_id)
+                ->first();
+                
+            if ($like) {
+                $like->delete();
+                return response()->json([
+                    "data" => true,
+                    "message" => "Unlike success"
+                ]);
+            } else {
+                $like = new Like();
+                $like->user_id = $user->id;
+                $like->post_id = $request->post_id;
+
+                if ($like->save()) {
+                    return response()->json([
+                        "data" => true,
+                        "message" => "Like add successfully"
+                    ]);
+                } else {
+                    return response()->json([
+                        "data" => false,
+                        "message" => "Something went wrong"
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                "data" => false,
+                "message" => "Don't have post"
+            ]);
+        }
+    }
+
+
 }
