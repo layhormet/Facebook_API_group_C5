@@ -14,7 +14,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        
+        // You can implement the method if needed
     }
 
     /**
@@ -22,7 +22,7 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // You can implement the method if needed
     }
 
     /**
@@ -30,7 +30,6 @@ class CommentController extends Controller
      */
     public function show(string $id)
     {
-        //
     }
 
     /**
@@ -38,7 +37,21 @@ class CommentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'description' => 'required|string|max:255',
+        ]);
+        $comment = Comments::find($id);
+        if (!$comment) {
+            return response()->json(['message' => 'Comment not found'], 404);
+        }
+        if ($comment->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $comment->description = $request->description;
+        $comment->save();
+        $comment->load('user', 'post');
+        return response()->json($comment);
     }
 
     /**
@@ -46,21 +59,31 @@ class CommentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $comment = Comments::find($id);
+        if (!$comment) {
+            return response()->json(['message' => 'Comment not found'], 404);
+        }
+        if ($comment->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $comment->delete();
+        return response()->json(['success' => true, 'message' => 'Comment removed']);
     }
+
+    /**
+     * Store a newly created comment on a post.
+     */
     public function commentPost(Request $request)
     {
         $request->validate([
-            'post_id' => 'required',
-            'body' => 'required',
-            'description' => 'required',
+            'post_id' => 'required|exists:posts,id',
+            'description' => 'required|string|max:255',
         ]);
 
-        $comment = Comments::create([
+        $comment = Comment::create([
             'post_id' => $request->post_id,
-            'body' => $request->body,
             'description' => $request->description,
-            'user_id' => Auth::id()
+            'user_id' => Auth::id(),
         ]);
 
         $comment->load('user', 'post');
