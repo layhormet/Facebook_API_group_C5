@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileRequest;
 use App\Http\Resources\ProfileResource;
+use App\Http\Resources\ShowProfileResource;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 
@@ -22,7 +24,7 @@ class ProfileController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProfileRequest $request)
     {
         $profile = Profile::createOrUpdate($request);
         return response()->json(["success" => true, "data" => $profile, "Message" => "Profile created successfully"]);
@@ -34,6 +36,7 @@ class ProfileController extends Controller
     public function show(string $id)
     {
         $profile = Profile::with(['image', 'user'])->find($id);
+        $profile = new ShowProfileResource($profile);
         if ($profile) {
             return ["success" => true, "data" => $profile];
         }

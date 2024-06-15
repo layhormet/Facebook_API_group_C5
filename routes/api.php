@@ -18,17 +18,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
 
 Route::get('/image/list', [ImageController::class, 'index'])->name('image_list');
 Route::post('/image/create', [ImageController::class, 'store'])->name('image_create');
-//create video
-Route::post('/video/create', [VideoController::class, 'store'])->name('video_create');
 
+// profile router
 Route::post('/profile/create', [ProfileController::class, 'store'])->name('profile_create');
+Route::get('/profile/show/{id}', [ProfileController::class, 'show'])->name('profile_show');
 Route::get('/profile/list', [ProfileController::class, 'index'])->name('profile_list');
-
-// Route::post('/student/create',[StudentController::class,'store'])->name('student.create');
+Route::put('/profile/update/{id}',[ProfileController::class,'update'])->name('profile_update');
 
 
