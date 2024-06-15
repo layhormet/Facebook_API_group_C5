@@ -1,9 +1,14 @@
 <?php
 
+// use App\Http\Controllers\api\AuthController as ApiAuthController;
+
+// use App\Http\Controllers\api\AuthController as ApiAuthController;
+
+use App\Http\Controllers\api\AuthController as ApiAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\api\AuthController;
-use App\Http\Controllers\api\CommentController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 
 /*
@@ -21,6 +26,7 @@ use App\Http\Controllers\PostController;
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/forgot_password', [AuthController::class, 'forgot_password'])->name('forgot_password');
+Route::post('/forgot-password', [AuthController::class,'sendResetLinkEmail'])->name('password.email');
 Route::post('/reset_password', [AuthController::class, 'reset_password'])->name('reset_password');
 
 // Protected routes requiring authentication
