@@ -41,10 +41,27 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/deleteComment/{id}', [CommentController::class, 'destroy'])->name('destroy');
     
 
-    Route::post('/create-post', [PostController::class, 'store'])->name('createPost');
-    Route::put('/update-post/{id}', [PostController::class, 'update'])->name('updatePost');
-    Route::delete('/delete-post/{id}', [PostController::class, 'destroy'])->name('deletePost');
+  
 });
+
+// Public routes
+
+// Route::post('/register', [AuthController::class, 'register'])->name('register');
+// Route::post('/login', [AuthController::class, 'login'])->name('login');
+// Route::post('/forgot_password',[AuthController::class,'forgot_password'])->name('forgot_password');
+// Route::post('reset_password',[AuthController::class, 'reset_password'])->name('reset_password');
+
+
+
+Route::post('/create-post', [PostController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/list', [PostController::class, 'index']);
+Route::get('/show/{id}', [PostController::class, 'show']);
+Route::put('/update/{id}', [PostController::class, 'update']);
+Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+   
+Route::post('/add-like', [PostController::class, 'addLike'])->middleware('auth:sanctum');
+
+
 
 // Public routes for posts
 Route::get('/posts', [PostController::class, 'index'])->name('listPosts');

@@ -20,6 +20,20 @@ class Post extends Model
         'image' => 'array',
         'video' => 'array'
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class , 'user_id');
+    }
+    public function getAllLike(){
+        return $this->hasMany(Like::class , 'post_id');
+
+    }
+    public function countLike(){
+        return $this->hasMany(Like::class , 'post_id')->count();
+
+    }
+    
+
    
 
     public function comments(){
