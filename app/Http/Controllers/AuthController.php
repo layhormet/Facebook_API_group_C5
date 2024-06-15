@@ -75,9 +75,9 @@ class AuthController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'User created successfully',
+            'message' => 'User registered successfully',
             'success' => true,
-            'user' => $user,
+            // 'user' => $user,
         ], 201);
     }
 
@@ -112,7 +112,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login successful',
             'success' => true,
-            'user' => $user,
+            // 'user' => $user,
             'access_token' => $accessToken,
         ]);
     }
@@ -124,8 +124,7 @@ class AuthController extends Controller
             $request->validate([
                 'email' => 'required|string|email',
             ]);
-    
-            // Find the user by email
+
             $user = User::where('email', $request->email)->first();
     
             if (!$user) {
@@ -135,19 +134,17 @@ class AuthController extends Controller
                 ], 404);
             }
     
-            // Generate a reset token
             $token = Str::random(40);
             
-            // Update user's reset_password_token
+          
             $user->reset_password_token = $token;
-            $user->save();
-    
-            // Here you would typically send an email with a link containing $token
+           
+
     
             return response()->json([
-                'message' => 'Password reset token generated and email sent',
+                'message' => 'Password reset token',
                 'success' => true,
-                'token' => $token, // Send the token back to the client for use in the reset password link
+                'token' => $token,
             ], 200);
     
         } catch (\Exception $e) {
@@ -159,22 +156,6 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    
-    // public function sendResetLinkEmail(Request $request){
-    //     $user = User::where('email', $request->email)->first();
-    //     if (!$user){
-    //         return response()->json([
-    //            'message' => 'User not found',
-    //            'success' => false,
-    //         ], 404);
-    //     }
-    //     $user->reset_password_token = Str::random(60);
-    //     $user->save();
-    // }
-    // public function build(){
-    //     return $this->view('email.reset_password')
-    // }
-
 
     public function reset_password(Request $request)
     {
@@ -185,7 +166,6 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
     
-        // Find the user by reset_password_token
         $user = User::where('reset_password_token', $request->token)->first();
     
         if (!$user) {
@@ -193,16 +173,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid token', 'success' => false], 400);
         }
     
-        // Update the user's password and clear the reset_password_token
         $user->update([
             'password' => Hash::make($request->password),
             'reset_password_token' => null,
         ]);
     
-        // Optionally log success message
-        // Log::info('Password reset successfully', ['user_id' => $user->id]);
-    
-        // Return success response
         return response()->json(['message' => 'Password reset successfully', 'success' => true], 200);
     }
 
