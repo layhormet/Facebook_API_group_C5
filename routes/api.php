@@ -37,14 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/updateComment/{id}', [CommentController::class, 'update'])->name('updateComment');
     Route::delete('/deleteComment/{id}', [CommentController::class, 'destroy'])->name('destroy');
 
-    // Post Routes
-    Route::post('/create-post', [PostController::class, 'store'])->name('createPost');
-    Route::post('/add-like', [PostController::class, 'addLike'])->name('addLike');
 
-    // Friendship Routes
-    Route::post('/friend-request', [FriendshipController::class, 'sendRequest'])->name('sendFriendRequest');
-    Route::post('/friend-request/{id}/accept', [FriendshipController::class, 'acceptRequest'])->name('acceptFriendRequest');
-    Route::post('/friend-request/{id}/decline', [FriendshipController::class, 'declineRequest'])->name('declineFriendRequest');
+
+
 });
 
 // Public Post Routes
@@ -53,3 +48,12 @@ Route::get('/posts/{id}', [PostController::class, 'show'])->name('showPost');
 Route::get('/posts/{postId}/comments', [PostController::class, 'showComment'])->name('showComment');
 Route::put('/posts/{id}', [PostController::class, 'update'])->name('updatePost');
 Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('deletePost');
+
+// post 
+Route::post('/create-post', [PostController::class, 'createPost'])->middleware('auth:sanctum');
+Route::get('/list', [PostController::class, 'index']);
+Route::get('/show/{id}', [PostController::class, 'show']);
+Route::put('/update/{id}', [PostController::class, 'update']);
+Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+   
+Route::post('/add-like', [PostController::class, 'addLike'])->middleware('auth:sanctum');
