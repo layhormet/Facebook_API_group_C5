@@ -2,6 +2,7 @@
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,4 +30,8 @@ Route::get('/profile/show/{id}', [ProfileController::class, 'show'])->name('prof
 Route::get('/profile/list', [ProfileController::class, 'index'])->name('profile_list');
 Route::put('/profile/update/{id}',[ProfileController::class,'update'])->name('profile_update');
 
+//user
+Route::post('/user/create', [UserController::class, 'store'])->name('user_create');
+Route::get('/user/list', [UserController::class, 'index'])->name('user_list');
+Route::put('/user/update/{id}',[UserController::class,'update'])->name('user_update');
 
