@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\APi\FriendRequestController;
+use App\Http\Controllers\Api\FriendShipController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\VideoController;
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
 
+//upload images
 Route::get('/image/list', [ImageController::class, 'index'])->name('image_list');
 Route::post('/image/create', [ImageController::class, 'store'])->name('image_create');
 
