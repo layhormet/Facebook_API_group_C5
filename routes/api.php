@@ -40,6 +40,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/updateComment/{id}', [CommentController::class, 'update'])->name('updateComment');
     Route::delete('/deleteComment/{id}', [CommentController::class, 'destroy'])->name('destroy');
     Route::get('/friend_list', [FriendshipController::class, 'index']);
+
+    // Post Routes
+    Route::post('/create-post', [PostController::class, 'store'])->name('createPost');
+    Route::post('/add-like', [PostController::class, 'addLike'])->name('addLike');
+
+    // Friendship Routes
+    Route::post('/friend-request', [FriendshipController::class, 'sendRequest'])->name('sendFriendRequest');
+    Route::post('/friend-request/{id}/accept', [FriendshipController::class, 'acceptRequest'])->name('acceptFriendRequest');
+    Route::post('/friend-request/{id}/decline', [FriendshipController::class, 'declineRequest'])->name('declineFriendRequest');
+    Route::delete('/remove-friends/{friend}', [FriendshipController::class, 'destroy']);
 });
 
 // Public Post Routes
