@@ -8,9 +8,30 @@ use App\Http\Resources\ProfileResource;
 use App\Http\Resources\ShowProfileResource;
 use App\Models\Profile;
 use Illuminate\Http\Request;
-
+/**
+ * @OA\Info(title="My API", version="1.0")
+ */
 class ProfileController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/profiles",
+     *     summary="Get list of profiles",
+     *     tags={"Profiles"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Profile")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
+     * )
+     */
     // /
     //  * Display a listing of the resource.
     //  */

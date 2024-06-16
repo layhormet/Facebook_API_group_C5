@@ -14,13 +14,35 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-
+/**
+ * @OA\Info(title="My API", version="1.0")
+ */
 
 class AuthController extends Controller
 {
     /**
+     * @OA\Get(
+     *     path="/api/profiles",
+     *     summary="Get list of profiles",
+     *     tags={"Profiles"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Profile")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
+     * )
+     */
+    /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         $users = User::all();

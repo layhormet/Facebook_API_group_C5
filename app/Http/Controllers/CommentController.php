@@ -6,9 +6,30 @@ use App\Http\Controllers\Controller;
 use App\Models\Comments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Info(title="My API", version="1.0")
+ */
 class CommentController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/profiles",
+     *     summary="Get list of profiles",
+     *     tags={"Profiles"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Profile")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
+     * )
+     */
     /**
      * Display a listing of the resource.
      */
