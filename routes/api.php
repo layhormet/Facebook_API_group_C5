@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/friend-request', [FriendshipController::class, 'sendRequest'])->name('sendFriendRequest');
     Route::post('/friend-request/{id}/accept', [FriendshipController::class, 'acceptRequest'])->name('acceptFriendRequest');
     Route::post('/friend-request/{id}/decline', [FriendshipController::class, 'declineRequest'])->name('declineFriendRequest');
+    Route::delete('/remove-friends/{friend}', [FriendshipController::class, 'destroy']);
 });
 
 // Public Post Routes

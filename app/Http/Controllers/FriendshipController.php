@@ -15,7 +15,7 @@ class FriendshipController extends Controller
         $friend_id = $request->friend_id;
         $user = Auth::user();
 
-        // Check if a friendship already exists
+    
         $existingFriendship = Friendship::where(function ($query) use ($user, $friend_id) {
             $query->where('user_id', $user->id)
                   ->where('friend_id', $friend_id);
@@ -38,47 +38,53 @@ class FriendshipController extends Controller
     }
     public function acceptRequest($friendship_id)
     {
-        // Get the authenticated user's ID
         $user_id = Auth::id();
     
-        // Find the friendship request where the authenticated user's ID and the friendship_id match
+    
         $friendship = Friendship::where('friend_id', $friendship_id)
                                 ->where('user_id', $user_id)
                                 ->first();
     
         if ($friendship) {
-            // Update the status to 'accepted'
+        
             $friendship->update(['status' => 'accepted']);
             
             return response()->json(['data'=>$friendship,'message' => 'Friend request accepted'], 200);
         } else {
-            // If no matching friendship request is found, return a 404 response
+        
             return response()->json(['message' => 'Friend request not found'], 404);
         }
     }
     public function declineRequest($friendship_id)
     {
-        // Get the authenticated user's ID
+
         $user_id = Auth::id();
     
-        // Find the friendship request where the authenticated user's ID and the friendship_id match
+    
         $friendship = Friendship::where('friend_id', $friendship_id)
                                 ->where('user_id', $user_id)
                                 ->first();
     
         if ($friendship) {
-            // Update the status to 'accepted'
+        
             $friendship->update(['status' => 'declined']);
             
             return response()->json(['data'=>$friendship,'message' => 'Friend request declined'], 200);
         } else {
-            // If no matching friendship request is found, return a 404 response
+        
             return response()->json(['message' => 'Friend request not found'], 404);
         }
     }
-  
-    
-    
 
-  
+    public function destroy($friendId)
+    {
+        $user = Auth::user();
+        $friend = User::findOrFail($friendId);
+
+        // Remove the friend relationship in both directions
+        $user->friends()->detach($friendId);
+        $friend->friends()->detach($user->id);
+
+        return response()->json(['message' => 'Friend removed successfully']);
+    }
 }
