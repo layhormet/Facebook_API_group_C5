@@ -1,12 +1,7 @@
 <?php
-
-use App\Http\Controllers\APi\FriendRequestController;
-use App\Http\Controllers\Api\FriendShipController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\AuthController;
-use App\Models\Video;
 use Illuminate\Support\Facades\Route;
 
 /*
