@@ -37,7 +37,17 @@ class UserSeeder extends Seeder
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(20),
         ]);
+        $user = User::firstOrCreate(['email' => 'ka@gmail.com'], [
+            'name' => 'ka',
+            'email' => 'ka@gmail.com',
+            'email_verified_at' => now(),
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(20),
+        ]);
+
         $user->syncRoles(["User"]);
         $user->syncPermissions(["view_users","view_roles", "view_permissions"]);
+        
+
     }
 }

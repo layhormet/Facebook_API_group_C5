@@ -1,11 +1,12 @@
 <?php
-use App\Http\Controllers\api\AuthController as ApiAuthController;
-use Illuminate\Http\Request;
+
+use App\Http\Controllers\Api\ImageController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\FriendshipController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,3 +58,17 @@ Route::put('/update/{id}', [PostController::class, 'update']);
 Route::delete('/delete/{id}', [PostController::class, 'destroy']);
    
 Route::post('/add-like', [PostController::class, 'addLike'])->middleware('auth:sanctum');
+
+
+
+//upload images
+Route::get('/image/list', [ImageController::class, 'index'])->name('image_list');
+Route::post('/image/create', [ImageController::class, 'store'])->name('image_create');
+
+// profile router
+Route::post('/profile/create', [ProfileController::class, 'store'])->name('profile_create');
+Route::get('/profile/show/{id}', [ProfileController::class, 'show'])->name('profile_show');
+Route::get('/profile/list', [ProfileController::class, 'index'])->name('profile_list');
+Route::put('/profile/update/{id}',[ProfileController::class,'update'])->name('profile_update');
+
+
