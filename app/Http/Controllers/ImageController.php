@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'image_url' => '|required',
+            'image_url' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -30,7 +30,7 @@ class ImageController extends Controller
         try {
             if ($request->hasFile('image_url')) {
                 $image = $request->file('image_url');
-                $path = $image->store('image_urls', 'public');
+                $path = $image->store('images', 'public');
                 $path = Storage::url($path);
 
                 $image = Image::create(['image_url' => $path]);
@@ -48,7 +48,7 @@ class ImageController extends Controller
                 $filename = 'images/' . Str::random(10) . '.' . pathinfo($image_url, PATHINFO_EXTENSION);
                 Storage::disk('public')->put($filename, $imageContents);
 
-                $image = Image::create(['image_url' => $filename]);
+                $image = Image::create(['image_url' => Storage::url($filename)]);
                 return response()->json(['success' => true, 'data' => $image, 'message' => 'URL image uploaded successfully'], 201);
             }
 
@@ -57,6 +57,7 @@ class ImageController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
     public function show(string $id)
     {
         $image = Image::find($id);
@@ -66,22 +67,17 @@ class ImageController extends Controller
         return response()->json(['error' => 'Image not found'], 404);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         // Implement update logic if needed
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $image = Image::find($id);
         if ($image) {
-            Storage::disk('public')->delete($image->image_url);
+            $imagePath = str_replace('/storage', '', $image->image_url);
+            Storage::disk('public')->delete($imagePath);
             $image->delete();
             return response()->json(['success' => true, 'message' => 'Image deleted successfully'], 200);
         }

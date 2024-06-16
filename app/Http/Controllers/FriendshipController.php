@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Response;
 
 class FriendshipController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user();
+        $friends = $user->friends()->get(['id', 'name', 'profile_picture_url', 'status']);
+
+        return response()->json($friends);
+    }
     public function sendRequest(Request $request)
     {
         $friend_id = $request->friend_id;

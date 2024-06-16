@@ -182,11 +182,17 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request): JsonResponse
-
     {
         $user = Auth::user();
-        $user->tokens()->delete();
-        auth()->guard('web')->logout();
-        return response()->json(['success' => true, 'message' => 'you have been logged out'], 200);
+    
+        if ($user) {
+            $user->tokens()->delete();
+    
+            auth()->guard('web')->logout();
+    
+            return response()->json(['success' => true, 'message' => 'You have been logged out'], 200);
+        }
+    
+        return response()->json(['success' => false, 'message' => 'No user is authenticated'], 400);
     }
 }

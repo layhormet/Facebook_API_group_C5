@@ -1,11 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\ImageController;
-use App\Http\Controllers\Api\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendshipController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
+use App\Models\Friendship;
 use Illuminate\Http\Request;
 
 /*
@@ -23,7 +26,6 @@ use Illuminate\Http\Request;
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/forgot_password', [AuthController::class, 'forgot_password'])->name('forgot_password');
-Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::post('/reset_password', [AuthController::class, 'reset_password'])->name('reset_password');
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -37,10 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/commentPost', [CommentController::class, 'commentPost'])->name('commentPost');
     Route::put('/updateComment/{id}', [CommentController::class, 'update'])->name('updateComment');
     Route::delete('/deleteComment/{id}', [CommentController::class, 'destroy'])->name('destroy');
-
-
-
-
+    Route::get('/friend_list', [FriendshipController::class, 'index']);
 });
 
 // Public Post Routes
@@ -56,7 +55,7 @@ Route::get('/list', [PostController::class, 'index']);
 Route::get('/show/{id}', [PostController::class, 'show']);
 Route::put('/update/{id}', [PostController::class, 'update']);
 Route::delete('/delete/{id}', [PostController::class, 'destroy']);
-   
+
 Route::post('/add-like', [PostController::class, 'addLike'])->middleware('auth:sanctum');
 
 
@@ -69,6 +68,4 @@ Route::post('/image/create', [ImageController::class, 'store'])->name('image_cre
 Route::post('/profile/create', [ProfileController::class, 'store'])->name('profile_create');
 Route::get('/profile/show/{id}', [ProfileController::class, 'show'])->name('profile_show');
 Route::get('/profile/list', [ProfileController::class, 'index'])->name('profile_list');
-Route::put('/profile/update/{id}',[ProfileController::class,'update'])->name('profile_update');
-
-
+Route::put('/profile/update/{id}', [ProfileController::class, 'update'])->name('profile_update');

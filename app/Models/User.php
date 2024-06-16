@@ -51,5 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class, 'user_id', 'id');
     }
+    public function friends(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id');
+    }
   
 }
