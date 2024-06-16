@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comments;
 use App\Http\Resources\PostLiatResourse;
 use App\Http\Resources\PostResourse;
 use App\Models\Like;
 use App\Models\Post;
+use App\Http\Resources\UserCommentResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage;;
 
 class PostController extends Controller
 {
@@ -63,7 +65,7 @@ class PostController extends Controller
     public function show(string $id)
     {
         $posts = Post::find($id);
-        $posts= new PostResourse($posts);
+        $posts = new PostResourse($posts);
         return response()->json(['success' => true, 'data' => $posts], 200);
     }
 
@@ -110,9 +112,7 @@ class PostController extends Controller
             'post' => $post
         ]);
     }
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
@@ -123,18 +123,32 @@ class PostController extends Controller
             'success' => true
         ]);
     }
+    public function showComment($post_id)
+    {
+        // Find the post
+        $post = Post::find($post_id);
 
-    // add like action to post
+        if (!$post) {
+            return response()->json(['success' => false, 'message' => 'Post not found'], 404);
+        }
+
+        // Retrieve comments for the post with user information
+        $comments = Comments::where('post_id', $post_id)->with('user')->get();
+        $comments = UserCommentResource::collection($comments);
+
+        return response()->json(['post' => $post, 'comments' => $comments], 200);
+    }
+
 
     public function addLike(Request $request)
     {
-        
+
         $user = $request->user();
         try {
             $like = Like::where('user_id', $user->id)
                 ->where('post_id', $request->post_id)
                 ->first();
-                
+
             if ($like) {
                 $like->delete();
                 return response()->json([
@@ -165,6 +179,4 @@ class PostController extends Controller
             ]);
         }
     }
-
-
 }
